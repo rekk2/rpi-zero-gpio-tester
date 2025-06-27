@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+  <title>Edit Config</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 2em; }
+    img.pinout { max-width: 100%; height: auto; margin-bottom: 1em; }
+    input[type=text], input[type=number] {
+      font-size: 1.2em;
+      padding: 0.5em;
+      width: 80%;
+      margin: 0.5em;
+    }
+    button { font-size: 1.5em; padding: 0.5em 2em; margin: 0.5em; }
+    label { display: block; margin: 1em 0 0.2em; }
+    h3 { margin-top: 1.5em; }
+    .step-preview { display: flex; flex-wrap: wrap; justify-content: center; margin: 1em auto; }
+    .step-box { margin: 4px; padding: 8px; border-radius: 4px; color: #fff; font-size: 1em; }
+    .step-box.gpio { border: 2px solid #28a745; }
+    .step-box.pause { border: 2px solid purple; }
+    .color1 { background: #6c757d; }
+    .color2 { background: #17a2b8; }
+    .color3 { background: #ffc107; }
+    .color4 { background: #dc3545; }
+    .add-step-button { font-size: 1.2em; padding: 0.5em 1em; background: #007bff; color: white; border: none; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>{{ 'Edit' if config else 'New' }} Config</h1>
+
+  <!-- Pinout Image -->
+  <img src="{{ url_for('static', filename='pinout.png') }}" alt="Raspberry Pi GPIO Pinout" class="pinout">
+
+  {% if config %}
+    <div class="step-preview">
+      <button class="add-step-button" onclick="document.getElementById('new-step').scrollIntoView()">Add Step</button>
+      {% for pin, delay in config.pins.items() %}
+        <div class="step-box {{ 'pause' if pin=='pause' else 'gpio' }} color{{ (loop.index0 % 4) + 1 }}">
+          {{ pin=='pause' and 'PAUSE' or ('GPIO ' ~ pin) }} ({{ delay }}s)
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <form method="post">
+    <label for="name">Config Name</label>
+    <input type="text" name="name" id="name" value="{{ config.name if config else '' }}" required>
+
+    <label for="count">Total Cycles</label>
+    <input type="number" name="count" id="count" value="{{ config.count if config else 10 }}" required>
+
+    {% if config %}
+      <h3>Existing Steps</h3>
+      {% for pin, delay in config.pins.items() %}
+        {% if pin != 'pause' %}
+          <label for="pin_{{ pin }}">GPIO {{ pin }}</label>
+          <input type="number" step="0.1" name="pin_{{ pin }}" id="pin_{{ pin }}" value="{{ delay }}">
+        {% endif %}
+      {% endfor %}
+      {% if 'pause' in config.pins %}
+        <label for="pause_duration">Pause (seconds)</label>
+        <input type="number" step="0.1" name="pause_duration" id="pause_duration" value="{{ config.pins.pause }}">
+      {% endif %}
+    {% endif %}
+
+    <h3 id="new-step">Add New Step</h3>
+    <label for="new_pin">GPIO Pin (#)</label>
+    <input type="number" name="new_pin" id="new_pin" placeholder="GPIO # (optional)">
+
+    <label for="new_delay">Duration (seconds)</label>
+    <input type="number" step="0.1" name="new_delay" id="new_delay" placeholder="Duration in seconds">
+
+    <label for="pause_duration">Pause (seconds, optional)</label>
+    <input type="number" step="0.1" name="pause_duration" id="pause_duration" placeholder="Pause duration">
+
+    <div>
+      <button type="submit" name="action" value="add_step">Add Step</button>
+      <button type="submit" name="action" value="save">Save</button>
+    </div>
+  </form>
+
+  <a href="{{ url_for('config_list') }}">Back</a>
+</body>
+</html>

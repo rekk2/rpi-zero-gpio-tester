@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+  <title>Status</title>
+  <meta http-equiv="refresh" content="5">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 2em; }
+    .log-box { background: #eee; padding: 1em; margin-top: 1em; font-family: monospace; font-size: 1em; max-height: 50vh; overflow-y: scroll; text-align: left; }
+    .info { font-size: 1.5em; margin-bottom: 1em; }
+    button, a.button { font-size: 1.5em; padding: 0.5em 2em; background: #dc3545; color: white; border: none; border-radius: 8px; text-decoration: none; display: inline-block; margin-top: 1em; }
+  </style>
+</head>
+<body>
+  <h1>Status</h1>
+
+  {% if params.running %}
+    <div class="info" style="color: green;">Running: Cycle {{ params.cycle }} / {{ params.count }}</div>
+    <a class="button" href="{{ url_for('stop') }}">⏹ Stop Test</a>
+  {% elif params.completed %}
+    <div class="info" style="color: blue;">Test Completed</div>
+  {% else %}
+    <div class="info" style="color: gray;">Idle</div>
+  {% endif %}
+
+  <div class="log-box">
+    {% for line in logs %}
+      {{ line.strip() }}<br>
+    {% endfor %}
+  </div>
+
+  <a class="button" style="background: #007bff;" href="{{ url_for('index') }}">⬅ Back</a>
+</body>
+</html>

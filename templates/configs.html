@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+  <title>Configs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 2em; }
+    a { display: block; margin: 0.5em; font-size: 1.2em; }
+    .button { font-size: 1.2em; margin: 1em 0; }
+  </style>
+</head>
+<body>
+  <h1>Saved Configs</h1>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul>
+      {% for msg in messages %}
+        <li>{{ msg }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  {% for cfg in configs %}
+    <a href="{{ url_for('config_edit', filename=cfg) }}">✏️ Edit {{ cfg }}</a>
+    <a href="{{ url_for('config_delete', filename=cfg) }}">🗑 Delete</a>
+  {% endfor %}
+
+  <a class="button" href="{{ url_for('config_create') }}">➕ Create New Config</a>
+  <a class="button" href="{{ url_for('index') }}">⬅ Back</a>
+</body>
+</html>

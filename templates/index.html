@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+  <title>GPIO Tester</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 2em; background: #f0f0f0; }
+    select, button { font-size: 1.5em; padding: 0.5em; margin: 1em 0; }
+    .info { font-size: 1.2em; margin-top: 1em; }
+    a { font-size: 1.2em; display: block; margin-top: 1em; }
+  </style>
+</head>
+<body>
+  <h1>GPIO Tester</h1>
+
+  <form method="post">
+    <label for="config_file">Select Configuration:</label><br>
+    <select name="config_file" id="config_file">
+      {% for cfg in configs %}
+        <option value="{{ cfg }}">{{ cfg.rsplit('.', 1)[0] }}</option>
+      {% endfor %}
+    </select><br>
+    <button type="submit">Start Test</button>
+  </form>
+
+  <a href="{{ url_for('status') }}">View Status & Logs</a>
+  <a href="{{ url_for('config_list') }}">Manage Configs</a>
+</body>
+</html>
